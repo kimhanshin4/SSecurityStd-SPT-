@@ -73,9 +73,9 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) { //토큰 검증
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); //Signature키 인지 확인
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
@@ -90,7 +90,7 @@ public class JwtUtil {
     }
 
 
-    public Claims getUserInfoFromToken(String token) {
+    public Claims getUserInfoFromToken(String token) { //토큰에서 사용자 정보를 가져옴
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 

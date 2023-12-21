@@ -28,22 +28,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    @Override
+    @Override //인가의 시작*****
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
-        if (StringUtils.hasText(tokenValue)) {
-            tokenValue = jwtUtil.substringToken(tokenValue);
+        String tokenValue = jwtUtil.getTokenFromRequest(req); //Header에서 req로 받아온다.
+        if (StringUtils.hasText(tokenValue)) { //내용물이 있는지 확인
+            tokenValue = jwtUtil.substringToken(tokenValue); //토큰만 떼어옴
             log.info(tokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
+            if (!jwtUtil.validateToken(tokenValue)) { //토큰 검증 - Signature로 확인
                 log.error("Token Error");
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(tokenValue); //토큰에서 사용자 정보를 가져옴
             try {
-                setAuthentication(info.getSubject());
+                setAuthentication(info.getSubject()); //
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return;
@@ -54,16 +54,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
 
-    public void setAuthentication(String username) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
-        context.setAuthentication(authentication);
+    public void setAuthentication(String username) { //다른 security와의 융합을 위해 만든 code의 전부?
+        SecurityContext context = SecurityContextHolder.createEmptyContext(); //빈 security Context 생성
+        Authentication authentication = createAuthentication(username); //username을 기준으로 Authentication에 대입
+        context.setAuthentication(authentication); //context 에 넣어줌
 
-        SecurityContextHolder.setContext(context);
+        SecurityContextHolder.setContext(context); //holder에 넣어줌
     }
 
     private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username); //Userdetail 사용, DB에서 확인
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
