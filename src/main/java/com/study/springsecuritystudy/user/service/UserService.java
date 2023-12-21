@@ -1,5 +1,6 @@
 package com.study.springsecuritystudy.user.service;
 
+import com.study.springsecuritystudy.security.*;
 import com.study.springsecuritystudy.user.dto.*;
 import com.study.springsecuritystudy.user.entity.*;
 import com.study.springsecuritystudy.user.repository.*;
@@ -15,6 +16,7 @@ public class UserService {
 
     final UserRepository userRepository;
     final PasswordEncoder passwordEncoder;
+    final JwtUtil jwtUtil;
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -32,6 +34,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    //베이직 강의 따라잡기
     public void login(UserRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
@@ -43,4 +46,19 @@ public class UserService {
 
     }
 
+    public User createUser(UserRequestDto requestDto) {
+        User user = new User(requestDto.getUsername(), requestDto.getPassword(), UserRoleEnum.USER);
+        return userRepository.save(user);
+    }
+
+    public String login(UserRequestDto requestDto) {
+        User user = userRepository.findByUsername(requestDto.getUsername())
+            .orElseThrow(EntityNotFoundException::new);
+        if (user.getPassword().equals(requestDto.getPassword())) {
+            //암호가 일치하면 JWT지금
+            jwtUtil.createToken(user.getUsername(), user.getRole());
+        }
+        //응 돌아가
+        return "돌아가";
+    }
 }
