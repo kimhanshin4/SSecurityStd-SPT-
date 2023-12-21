@@ -2,7 +2,6 @@ package com.study.springsecuritystudy.user.controller;
 
 import com.study.springsecuritystudy.security.*;
 import com.study.springsecuritystudy.user.dto.*;
-import com.study.springsecuritystudy.user.entity.*;
 import com.study.springsecuritystudy.user.service.*;
 import lombok.extern.slf4j.*;
 import org.springframework.http.*;
@@ -22,15 +21,14 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/jwt")
-    public ResponseEntity<String> createJWT() {
-        String username = "Funold";
-        UserRoleEnum role = UserRoleEnum.USER;
+//    @PostMapping("/jwt")
+//    public ResponseEntity<String> createJWT() {
+//        String username = "Funold";
+//        UserRoleEnum role = UserRoleEnum.USER;
+//
+//        return new ResponseEntity<>(jwtUtil.createToken(username, role), HttpStatus.OK);
+//    }
 
-        return new ResponseEntity<>(jwtUtil.createToken(username, role), HttpStatus.OK);
-    }
-
-    //m
     @GetMapping("/users")
     public ResponseEntity<String> signup(@RequestBody UserRequestDto requestDto) {
         userService.signup(requestDto);
